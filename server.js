@@ -120,10 +120,13 @@ app.post('/api/chat', async (req, res) => {
 
         res.json({ reply: response.text });
 
-    } catch (error) {
-        console.error('Gemini API Error:', error);
-        res.status(500).json({ error: 'AI応答の生成に失敗しました。時間をおいて再度お試しください。' });
-    }
+	    } catch (error) {
+	    console.error('Gemini API Error:', error);
+	    if (error.status === 429) {
+	        return res.json({ reply: '申し訳ありません。ただいまAI問い合わせが非常に混み合っております。お急ぎの場合は直接お電話（011-618-2263）またはフォームよりお問い合わせください。' });
+	    }
+	    res.status(500).json({ error: 'AI応答の生成に失敗しました。' });
+	}
 });
 
 app.listen(PORT, () => {
